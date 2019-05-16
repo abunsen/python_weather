@@ -39,6 +39,7 @@ class Weather:
             print(report)
             
 
-w = Weather('Miami')
+city = input('Enter City Name: ')
+w = Weather(city)
 w.getRequest()
 
