@@ -1,34 +1,44 @@
 import pytemperature
 import requests,json
+import os
 
-api_key = "d4fc50cffcc26b21c01a844564115245"
-base_url = "https://api.openweathermap.org/data/2.5/weather?"
+class Weather:
+    api_key = os.environ.get('WEATHER_API')
+    base_url = "https://api.openweathermap.org/data/2.5/weather?"
+    complete_url = base_url + "appid=" + api_key + "&q=" 
 
-city = input('Enter City Name: ')
-complete_url = base_url + "appid=" + api_key + "&q=" + city
-response = requests.get(complete_url)
-weather = response.json()
 
-if weather['cod'] != '404':
-    main = weather['main']
+    def __init__(self, location):
+        self.complete_url = self.complete_url + location
 
-    hummidity = main['humidity']
-    tempKelvin= main['temp']
-    temperature = pytemperature.k2f(tempKelvin)
-    temp = str(temperature)
+    def showAPI(self):
+        print(self.complete_url)
 
-    w = weather['wind']
-    windSpeed = w['speed']
-    
-    wind = str(windSpeed)
+    def getRequest(self):
+        self.response = requests.get(self.complete_url)
+        self.weather = self.response.json()
+        # print(self.weather)
+        if self.weather['cod'] != '404':
+            main = self.weather['main']
+            hummidity = main['humidity']
 
-    city = weather['name']
+            kelvin = main['temp']
+            temperature = pytemperature.k2f(kelvin)
+            temp = str(temperature)
 
-    description = weather['weather'][0]['description']
-   
+            w = self.weather['wind']
+            windSpeed = w['speed']
+            wind = str(windSpeed)
 
-    print(description)
+            city = self.weather['name']
+            description = self.weather['weather'][0]['description']
 
-    report = 'The temperature in ' + city + ' is ' + temp + ' with a windspeed of ' + wind + ', ' + description + ' likely.'
+          
+            report = 'The temperature in ' + city + ' is ' + temp + ' with a windspeed of ' + wind + ', ' + description + ' likely.'
+            
+            print(report)
+            
 
-    print(report)
+w = Weather('Miami')
+w.getRequest()
+
