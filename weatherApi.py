@@ -14,32 +14,31 @@ class Weather:
     def showAPI(self):
         print(self.complete_url)
 
-    def getRequest(self):
+    @property
+    def temp_in_f(self):
+        return str(pytemperature.k2f(self.weather['main']['temp'])
+    
+    @property
+    def wind_speed(self):
+        w = self.weather['wind']
+        wind_speed = w['speed']
+        return str(wind_speed)
+                          
+    def report(self):
         self.response = requests.get(self.complete_url)
         self.weather = self.response.json()
         # print(self.weather)
         if self.weather['cod'] != '404':
+            city = self.weather['name']
             main = self.weather['main']
             hummidity = main['humidity']
-
-            kelvin = main['temp']
-            temperature = pytemperature.k2f(kelvin)
-            temp = str(temperature)
-
-            w = self.weather['wind']
-            windSpeed = w['speed']
-            wind = str(windSpeed)
-
-            city = self.weather['name']
             description = self.weather['weather'][0]['description']
-
-          
-            report = 'The temperature in ' + city + ' is ' + temp + ' with a windspeed of ' + wind + ', ' + description + ' likely.'
-            
-            print(report)
-            
+            report = 'The temperature in ' + city + ' is ' + self.temp_in_f + ' with a windspeed of ' + self.wind_speed + ', ' + description + ' likely.'
+         else:
+            report = ""
+         return report
 
 city = input('Enter City Name: ')
 w = Weather(city)
-w.getRequest()
+print w.report()
 
